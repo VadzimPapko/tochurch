@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using ToChurch.Interfaces;
 
 namespace ToChurch.Controllers
 {
@@ -10,10 +11,19 @@ namespace ToChurch.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        private readonly IChurchRepository _churchRepository;
+
+        public ValuesController(IChurchRepository churchRepository)
+        {
+            _churchRepository = churchRepository;
+        }
+
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
+            _churchRepository.GetAllChurches();
+
             return new string[] { "value1", "value2" };
         }
 
