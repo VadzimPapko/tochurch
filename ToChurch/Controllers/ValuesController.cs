@@ -20,11 +20,14 @@ namespace ToChurch.Controllers
 
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public ActionResult<IEnumerable<Church>> Get()
         {
-            _churchRepository.GetAllChurches();
+            var result = _churchRepository.GetAllChurches();
 
-            return new string[] { "value1", "value2" };
+            if (result == null)
+                return BadRequest();
+
+            return Ok(result);
         }
 
         // GET api/values/5

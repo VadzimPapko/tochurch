@@ -19,13 +19,18 @@ namespace ToChurch.Repositories
             //_db = new MySqlConnection(connectionString.Value.ConnectionString);
 
             var conString =
-                "host=52.57.145.179;user id=hrambelcatalog;password=WYaJNI7JuszNLguX;database=cataloghrambel;";
+                "host=localhost;port=3306;user id=root;password=123321;database=cataloghrambel;";
             _db = new MySqlConnection(conString);
         }
 
         public IEnumerable<Church> GetAllChurches()
         {
-            throw new NotImplementedException();
+            if (_db == null)
+            throw new NullReferenceException();
+
+            var churches = _db.Query<Church>("SELECT * FROM 5_hram").ToArray();
+
+            return churches;
         }
 
         public Church GetChurch(string churchName)
