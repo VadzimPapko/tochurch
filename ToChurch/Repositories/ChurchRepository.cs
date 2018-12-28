@@ -7,6 +7,7 @@ using Dapper;
 using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
 using ToChurch.Interfaces;
+using ToChurch.Models;
 
 namespace ToChurch.Repositories
 {
@@ -21,6 +22,16 @@ namespace ToChurch.Repositories
             var conString =
                 "host=localhost;port=3306;user id=root;password=123321;database=cataloghrambel;";
             _db = new MySqlConnection(conString);
+        }
+
+        public IEnumerable<Address> GetAddresses()
+        {
+            if (_db == null)
+                throw new NullReferenceException();
+
+            var addresses = _db.Query<Address>("SELECT * FROM address").ToArray();
+
+            return addresses;
         }
 
         public IEnumerable<Church> GetAllChurches()

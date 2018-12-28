@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ToChurch.Models;
 
 namespace ToChurch.Interfaces
 {
@@ -9,5 +10,7 @@ namespace ToChurch.Interfaces
     {
         IEnumerable<Church> GetAllChurches();
         Church GetChurch(string churchName);
+
+        IEnumerable<Address> GetAddresses();
     }
 }

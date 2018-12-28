@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TestWeb</title>
+
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet" href="~/css/app.css" />
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
+              integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+              crossorigin="" />
+        <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
+                integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+                crossorigin=""></script>
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+    </environment>
+</head>
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a asp-page="/Index" class="navbar-brand">TestWeb</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a asp-page="/Index">Home</a></li>
+                    <li><a asp-page="/About">About</a></li>
+                    <li><a asp-page="/Contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <partial name="_CookieConsentPartial" />
+
+    <div class="container body-content">
+        @RenderBody()
+        
+        <hr />
+        <h1>OSM</h1>
+        <div id="mapid">
+        </div>
+        <footer>
+            <p>&copy; 2018 - TestWeb</p>
+        </footer>
+    </div>
+
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script>
+            debugger;
+            var mymap = L.map('mapid').setView([53.893, 27.567], 12);
+
+            L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                maxZoom: 18,
+                id: 'mapbox.streets',
+                accessToken: 'pk.eyJ1IjoidnBhcGtvIiwiYSI6ImNqcTZoZzZlYTI4NzY0M29iYWp1NDE4NHEifQ.NB_BwbfTtnnLIIOkrIsRgQ'
+            }).addTo(mymap);
+
+
+            var contentDataType = 'application/json; charset=utf-8';
+            $.ajax({
+                url: 'https://localhost:44379/api/osmmap',
+                type: 'get',
+                dataType: 'json',
+                crossDomain: true,
+
+                success: function (data) {
+                    console.log(data);
+
+                    data.forEach(function (item) {
+                        var markerOsm = L.marker([item.lat, item.lon]).addTo(mymap);
+                        markerOsm.bindPopup("<b>Hello, new marker</b>");
+                    });
+                },
+                error: function (jqXhr, textStatus, errorThrown) {
+                    console.log(errorThrown);
+                }
+            });
+
+            var coordinates = [[53.88437, 27.59051], [53.84521, 27.50480]]
+            coordinates.forEach(function (item) {
+                var markerOsm = L.marker(item).addTo(mymap);
+                markerOsm.bindPopup("<b>Hello, new marker</b>");
+            });
+
+            var marker = L.marker([53.90566, 27.55599]).addTo(mymap);
+            marker.
+                bindPopup('<b>Church description</b><br><div><img src="https://res.cloudinary.com/dobr/image/upload/c_thumb,h_120,w_200/v1474551816/6-12-919-12big_qkvhfw.jpg"></div>').openPopup();
+
+            var myicon = L.divIcon();
+            var marker2 = L.marker([53.93090, 27.48116]).addTo(mymap); 
+            marker2.
+                bindPopup('<div class="infoW"><div class="propImg"><img src="https://res.cloudinary.com/dobr/image/upload/c_thumb,h_120,w_200/v1474551816/6-12-919-12big_qkvhfw.jpg"><div class="propBg"><div class="propPrice">Минск</div><div class="propType">Храм</div></div></div><div class="paWrapper"><div class="propTitle">Храм в честь Святителя Спиридона Тримифунтского</div><div class="propAddress">г. Минск, ул. Бурдейного, д. 22</div></div><div class="propRating"><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star-half-o"></span> <span>(4)</span></div><ul class="propFeat2"><li><span class="fa fa-phone"></span> <a href="tel:+375445559996">+375445559996</a></li><li><span class="fa fa-globe"></span> <a target="_blank" href="http://hram-spiridona.by">hram-spiridona.by</a></li></ul><div class="infoButtons"><a href="/minsk/hram-spiridona-trimifuntskogo/raspisanie-bogosluzheniy/" class="btn btn-sm btn-round btn-gray btn-o">Расписание</a><a href="/minsk/hram-spiridona-trimifuntskogo/" class="btn btn-sm btn-round btn-blue viewInfo">Инфо</a></div></div>', { classname: 'infoW'});
+        </script>
+    </environment>
+    <environment exclude="Development">
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT">
+        </script>
+        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                crossorigin="anonymous"
+                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
+        </script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
