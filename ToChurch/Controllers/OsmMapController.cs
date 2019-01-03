@@ -34,8 +34,22 @@ namespace ToChurch.Controllers
             return Ok(result);
         }
 
+        // GET: api/OsmMap/minsk
+        [HttpGet("{cityName}", Name = "GetByCityName")]
+        public ActionResult<IEnumerable<Address>> Get(string cityName)
+        {
+            if (string.IsNullOrWhiteSpace(cityName))
+                return BadRequest();
+
+            var result = _churchRepository.GetAddressesByCityName(cityName);
+            if (result == null)
+                return BadRequest();
+
+            return Ok(result);
+        }
+
         // GET: api/OsmMap/5
-        [HttpGet("{id}", Name = "Get")]
+        [HttpGet("{id:int}", Name = "Get")]
         public string Get(int id)
         {
             return "value";

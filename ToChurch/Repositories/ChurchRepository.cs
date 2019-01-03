@@ -24,6 +24,11 @@ namespace ToChurch.Repositories
             _db = new MySqlConnection(conString);
         }
 
+        public Address GetAddressByHramId(int hramId)
+        {
+            throw new NotImplementedException();
+        }
+
         public IEnumerable<Address> GetAddresses()
         {
             if (_db == null)
@@ -32,6 +37,29 @@ namespace ToChurch.Repositories
             var addresses = _db.Query<Address>("SELECT * FROM address").ToArray();
 
             return addresses;
+        }
+
+        public IEnumerable<Address> GetAddressesByCityName(string cityName)
+        {
+            if (string.IsNullOrWhiteSpace(cityName))
+                return Enumerable.Empty<Address>();
+
+            var citySql = "SELECT * FROM city WHERE city_name = @CityName";
+            var cityId = _db.QuerySingleOrDefault<City>(citySql, new { CityName = cityName})?.City_Id;
+
+            var addressSql = "SELECT * FROM address WHERE a_city_id =@CityID";
+            var addresses = _db.Query<Address>(addressSql, new { CityId = cityId}).ToArray();
+            return addresses;
+        }
+
+        public IEnumerable<Address> GetAddressesByLocation(string location)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<Address> GetAddressesByRange()
+        {
+            throw new NotImplementedException();
         }
 
         public IEnumerable<Church> GetAllChurches()

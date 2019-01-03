@@ -12,5 +12,10 @@ namespace ToChurch.Interfaces
         Church GetChurch(string churchName);
 
         IEnumerable<Address> GetAddresses();
+        IEnumerable<Address> GetAddressesByCityName(string cityName);
+
+        Address GetAddressByHramId(int hramId);
+        IEnumerable<Address> GetAddressesByRange();
+        IEnumerable<Address> GetAddressesByLocation(string location);
     }
 }
